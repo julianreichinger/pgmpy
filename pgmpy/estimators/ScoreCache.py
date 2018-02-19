@@ -3,14 +3,12 @@ from pgmpy.estimators import StructureScore
 
 
 class ScoreCache(StructureScore):
-    """
-    A wrapper class for StructureScore instances, which implement a decomposable score,
-    that caches local scores.
-    Based on the global decomposition property of Bayesian networks for decomposable scores.
-    """
 
     def __init__(self, base_scorer, data, max_size=10_000, **kwargs):
         """
+        A wrapper class for StructureScore instances, which implement a decomposable score,
+        that caches local scores.
+        Based on the global decomposition property of Bayesian networks for decomposable scores.
 
         Parameters
         ----------
@@ -38,12 +36,12 @@ class ScoreCache(StructureScore):
         super(ScoreCache, self).__init__(data, **kwargs)
 
     def local_score(self, variable, parents):
-        # Cast to tuple to make it hashable
-        return self.cache(variable, tuple(parents))
+        hashable = tuple(parents)
+        return self.cache(variable, hashable)
 
     def _wrapped_original(self, variable, parents):
-        # Cast to list as local_score expects it
-        return self.base_scorer.local_score(variable, list(parents))
+        expected = list(parents)
+        return self.base_scorer.local_score(variable, expected)
 
 
 # link fields
@@ -51,17 +49,17 @@ _PREV, _NEXT, _KEY, _VALUE = 0, 1, 2, 3
 
 
 class LRUCache:
-    """
-    Least-Recently-Used cache.
-    Acts as a wrapper around a arbitrary function and caches the return values.
-
-    Based on the implementation of Raymond Hettinger
-    (https://stackoverflow.com/questions/2437617/limiting-the-size-of-a-python-dictionary)
-    """
 
     def __init__(self, original_function, max_size=10000):
         """
+        Least-Recently-Used cache.
+        Acts as a wrapper around a arbitrary function and caches the return values.
 
+        Based on the implementation of Raymond Hettinger
+        (https://stackoverflow.com/questions/2437617/limiting-the-size-of-a-python-dictionary)
+
+        Parameters
+        ----------
         :param original_function:
             The original function that will be wrapped. Return values will be cached.
             The function parameters have to be hashable.
