@@ -4,7 +4,7 @@ from pgmpy.estimators import StructureScore
 
 class ScoreCache(StructureScore):
 
-    def __init__(self, base_scorer, data, max_size=10_000, **kwargs):
+    def __init__(self, base_scorer, data, max_size=10000, **kwargs):
         """
         A wrapper class for StructureScore instances, which implement a decomposable score,
         that caches local scores.
