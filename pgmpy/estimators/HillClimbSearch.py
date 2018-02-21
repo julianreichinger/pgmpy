@@ -93,7 +93,7 @@ class HillClimbSearch(StructureEstimator):
                                        local_score(Y, old_Y_parents))
                         yield(operation, score_delta)
 
-    def estimate(self, start=None, tabu_length=0, max_indegree=None):
+    def estimate(self, start=None, tabu_length=0, max_indegree=None, intermediate_callback=None):
         """
         Performs local hill climb search to estimates the `BayesianModel` structure
         that has optimal score, according to the scoring method supplied in the constructor.
@@ -111,6 +111,9 @@ class HillClimbSearch(StructureEstimator):
         max_indegree: int or None
             If provided and unequal None, the procedure only searches among models
             where all nodes have at most `max_indegree` parents. Defaults to None.
+        intermediate_callback: callable or None
+            If provided and unequal None, the function will be called after each step of the hill climb search
+            with the current bayesian model and the score delta of the current step.
 
         Returns
         -------
@@ -169,5 +172,8 @@ class HillClimbSearch(StructureEstimator):
                 current_model.remove_edge(X, Y)
                 current_model.add_edge(Y, X)
                 tabu_list = ([best_operation] + tabu_list)[:tabu_length]
+
+            if intermediate_callback is not None:
+                intermediate_callback(current_model, best_score_delta)
 
         return current_model
